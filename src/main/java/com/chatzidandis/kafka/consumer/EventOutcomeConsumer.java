@@ -24,7 +24,7 @@ public class EventOutcomeConsumer {
             EventOutcome event =
                             objectMapper.readValue(message, EventOutcome.class);
 
-            List<Long> betIdsToSettle = betSettlementService.settleBetsForEvent(event);
+            List<Long> betIdsToSettle = betSettlementService.prepareAndSendSettlements(event);
             betIdsToSettle.forEach(betSettlementService::settleBet);
 
         } catch (Exception e) {

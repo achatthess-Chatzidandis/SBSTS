@@ -1,4 +1,4 @@
-package com.chatzidandis.rocketmq;
+package com.chatzidandis.rocketmq.producer;
 
 import com.chatzidandis.model.BetSettlement;
 import com.fasterxml.jackson.databind.ObjectMapper;

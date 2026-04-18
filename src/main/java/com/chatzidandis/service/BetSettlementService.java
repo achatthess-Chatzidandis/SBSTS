@@ -4,7 +4,7 @@ import com.chatzidandis.model.BetEntity;
 import com.chatzidandis.model.BetSettlement;
 import com.chatzidandis.model.EventOutcome;
 import com.chatzidandis.repository.BetRepository;
-import com.chatzidandis.rocketmq.BetSettlementProducer;
+import com.chatzidandis.rocketmq.producer.BetSettlementProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class BetSettlementService {
     private final BetRepository betRepository;
     private final BetSettlementProducer producer;
 
-    public List<Long> settleBetsForEvent(EventOutcome event) {
+    public List<Long> prepareAndSendSettlements(EventOutcome event) {
 
         List<Long> betIdsToSettle = new ArrayList<>();
         List<BetEntity> bets = betRepository.findBetsForSettlementByEventId(event.getEventId());
