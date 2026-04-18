@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - messaging-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - messaging-net
+
+  rocketmq-namesrv:
+    image: apache/rocketmq:5.1.4
+    container_name: rocketmq-namesrv
+    command: sh mqnamesrv
+    ports:
+      - "9876:9876"
+    networks:
+      - messaging-net
+
+  rocketmq-broker:
+    image: apache/rocketmq:5.1.4
+    container_name: rocketmq-broker
+    depends_on:
+      - rocketmq-namesrv
+    ports:
+      - "10911:10911"
+      - "10909:10909"
+    environment:
+      NAMESRV_ADDR: rocketmq-namesrv:9876
+      JAVA_OPT_EXT: "-server -Xms512m -Xmx512m"
+    command: >
+      sh mqbroker
+      -n rocketmq-namesrv:9876
+      -c /home/rocketmq/broker.conf
+    volumes:
+      - ./broker.conf:/home/rocketmq/broker.conf:ro
+    networks:
+      - messaging-net
+
+networks:
+  messaging-net:
+    driver: bridge
