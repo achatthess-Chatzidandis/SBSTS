@@ -1,3 +1,6 @@
+GITHUB LINK: https://github.com/achatthess-Chatzidandis/SBSTS
+
+
 This project is a Maven Spring Boot microservice that demonstrates an event-driven betting settlement pipeline using:
 
 Apache Kafka → for publishing and consuming event outcomes
